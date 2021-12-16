@@ -27,7 +27,7 @@ func getESData() int {
 	generalQuery := e.NewBoolQuery()
 	generalQuery = generalQuery.Must(timeQuery).Must(matchQuery)
 
-	resule, err := client.Search().Index("logstash-" + time.Now().Format("2006.02.01")).Query(generalQuery).Size(1000).Do(context.Background())
+	resule, err := client.Search().Index("logstash-" + time.Now().Format("2006.01.02")).Query(generalQuery).Size(1000).Do(context.Background())
 	if err != nil {
 		fmt.Println("faild")
 		fmt.Println(err)

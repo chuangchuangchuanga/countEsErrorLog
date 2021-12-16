@@ -22,7 +22,7 @@ func getESData() int {
 	var platformHits int
 
 	timeQuery := e.NewRangeQuery("@timestamp").Gte("now-15s").Lte("now")
-	matchQuery := e.NewMatchQuery("message", "error")
+	matchQuery := e.NewMatchQuery("log", "error")
 
 	generalQuery := e.NewBoolQuery()
 	generalQuery = generalQuery.Must(timeQuery).Must(matchQuery)

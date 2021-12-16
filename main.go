@@ -13,13 +13,12 @@ import (
 )
 
 func getESData() int {
-	client, err := e.NewClient(e.SetSniff(false), e.SetURL("http://172.16.0.13:9200"))
+	client, err := e.NewClient(e.SetSniff(false), e.SetURL("http://elasticsearch:9200"))
 	if err != nil {
 		// Handle error
 		fmt.Println(err)
 	}
 
-	var serverHists int
 	var platformHits int
 
 	timeQuery := e.NewRangeQuery("@timestamp").Gte("now-15s").Lte("now")
@@ -28,7 +27,7 @@ func getESData() int {
 	generalQuery := e.NewBoolQuery()
 	generalQuery = generalQuery.Must(timeQuery).Must(matchQuery)
 
-	resule, err := client.Search().Index("logstash-platform").Query(generalQuery).Size(1000).Do(context.Background())
+	resule, err := client.Search().Index("logstash-" + time.Now().Format("2006.02.01")).Query(generalQuery).Size(1000).Do(context.Background())
 	if err != nil {
 		fmt.Println("faild")
 		fmt.Println(err)
@@ -38,19 +37,7 @@ func getESData() int {
 		platformHits = int(resule.TotalHits())
 	}
 
-	a, b := client.Search().Index("logstash-server").Query(generalQuery).Size(1000).Do(context.Background())
-	if b != nil {
-		fmt.Println("faild")
-		fmt.Println(err)
-
-	} else {
-		fmt.Println(a.TotalHits())
-		serverHists = int(a.TotalHits())
-	}
-
-	totleHists := serverHists + platformHits
-
-	return totleHists
+	return platformHits
 	//hits := resule.Hits.Hits
 	//var pathList []string
 	//for _,b := range hits {
@@ -239,6 +226,7 @@ var (
 )
 
 func main() {
+
 	go recordMetrics()
 
 	http.Handle("/metrics", promhttp.Handler())

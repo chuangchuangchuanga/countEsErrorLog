@@ -227,6 +227,7 @@ var (
 
 func main() {
 
+	fmt.Println("logstash-" + time.Now().Format("2006.02.01"))
 	go recordMetrics()
 
 	http.Handle("/metrics", promhttp.Handler())
